@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bus Route Status</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      width: 300px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+    transform: scale(1.05);
+    background: #0056b3;
+    transition: 0.2s;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>🚌 Route Status</h1>
+
+  <select id="routeSelect" onchange="loadStatus()" style="padding:8px; margin-bottom:20px;">
+  <option value="1">Hostel → Academic Block</option>
+  <option value="2">Hostel → Library</option>
+  <option value="3">Gate → Admin Block</option>
+</select>
+
+
+  <div class="card">
+    <p><b>Route:</b> <span id="name"></span></p>
+    <p><b>Status:</b> <span id="status"></span></p>
+    <p><b>ETA:</b> <span id="eta"></span></p>
+    <button onclick="loadStatus()">Refresh</button>
+  </div>
+
+  <script>
+    async function loadStatus() {
+        
+
+      const routeId = document.getElementById('routeSelect').value;
+      const res = await fetch(`/routes/${routeId}/status`);
+
+
+      const data = await res.json();
+      document.getElementById('name').innerText = data.name;
+      document.getElementById('status').innerText = data.status;
+      document.getElementById('eta').innerText = data.eta;
+      const statusEl = document.getElementById('status');
+      if (data.status === "On Time") {
+        statusEl.style.color = "green";
+    } else {
+        statusEl.style.color = "red";
+    }
+
+    }
+
+    loadStatus();
+    setInterval(loadStatus, 10000); // 10 seconds
+
+
+  </script>
+
+</body>
+</html>
